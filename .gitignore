@@ -1,0 +1,20 @@
+# Frontend (remove completely)
+static/
+
+# Node
+node_modules/
+
+# Python
+venv/
+__pycache__/
+
+# DB
+instance/
+*.sqlite3
+
+# Terraform
+terraform/
+.terraform/
+
+# Logs
+*.log
