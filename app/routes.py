@@ -1,33 +1,45 @@
-from flask import Blueprint, request, render_template, jsonify, g
+from flask import Blueprint, request, render_template, jsonify, g, Response
 
 from app.utils.auth import generate_token, requires_auth
 from app.models.models import User, Task
 from app import db
 
+# 🔥 NEW: Prometheus
+from prometheus_client import Counter, generate_latest
+
 # Create Blueprint
 bp = Blueprint("main", __name__)
 
-# ------------------ ROUTES ------------------
+# 🔥 NEW: Metrics Counter
+REQUEST_COUNT = Counter('request_count', 'Total Requests')
+
+
+#  ROUTES 
 
 @bp.route('/', methods=['GET'])
 def index():
+    REQUEST_COUNT.inc()
     return render_template('index.html')
 
 
 @bp.route("/api/health", methods=["GET"])
 def health_check():
+    REQUEST_COUNT.inc()
     return jsonify({"status": "ok", "message": "Flask backend running smoothly!"})
 
 
 @bp.route('/<path:path>', methods=['GET'])
 def any_root_path(path):
+    REQUEST_COUNT.inc()
     return render_template('index.html')
 
 
-# ------------------ USER ------------------
+# USER 
 
 @bp.route("/api/create_user", methods=["POST"])
 def create_user():
+    REQUEST_COUNT.inc()
+
     incoming = request.get_json()
     
     success = User.create_user(incoming)
@@ -45,6 +57,8 @@ def create_user():
 
 @bp.route("/api/get_token", methods=["POST"])
 def get_token():
+    REQUEST_COUNT.inc()
+
     incoming = request.get_json()
     user = User.get_user_with_email_and_password(
         incoming["email"],
@@ -60,11 +74,13 @@ def get_token():
     return jsonify(error=True), 403
 
 
-# ------------------ TASKS ------------------
+#  TASKS 
 
 @bp.route("/api/submit_task", methods=["POST"])
 @requires_auth
 def submit_task():
+    REQUEST_COUNT.inc()
+
     incoming = request.get_json()
 
     success, task_id = Task.add_task(
@@ -82,6 +98,8 @@ def submit_task():
 @bp.route("/api/get_tasks_for_user", methods=["POST"])
 @requires_auth
 def get_tasks_for_user():
+    REQUEST_COUNT.inc()
+
     return jsonify(
         tasks=[
             i.serialize for i in Task.get_tasks_for_user(g.current_user["id"]).all()
@@ -92,6 +110,8 @@ def get_tasks_for_user():
 @bp.route("/api/delete_task", methods=["POST"])
 @requires_auth
 def delete_task():
+    REQUEST_COUNT.inc()
+
     incoming = request.get_json()
 
     success = Task.delete_task(incoming.get('task_id'))
@@ -100,3 +120,9 @@ def delete_task():
         return jsonify(message="Error deleting task"), 409
 
     return jsonify(success=True)
+
+
+#  METRICS ENDPOINT 
+@bp.route("/metrics")
+def metrics():
+    return Response(generate_latest(), mimetype="text/plain")

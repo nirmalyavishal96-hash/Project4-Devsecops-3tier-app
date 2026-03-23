@@ -13,8 +13,16 @@ spec:
         app: flask-app
     spec:
       containers:
-      - name: flask-app
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        ports:
-        - containerPort: 5000
+        - name: flask-app
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 5000
+
+        
+          env:
+            - name: SQLALCHEMY_DATABASE_URI
+              value: postgresql://postgres:postgres@postgres-db:5432/devsecops_db
+
+            - name: SECRET_KEY
+              value: mysecretkey
