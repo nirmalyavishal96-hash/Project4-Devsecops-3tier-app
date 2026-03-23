@@ -1,6 +1,6 @@
 image:
   repository: nirmalyavishal97/devsecops-flask-app
-  tag: "44"
+  tag: "45"
   pullPolicy: Always
 
 service:
