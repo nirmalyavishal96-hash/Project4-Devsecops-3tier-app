@@ -1,6 +1,6 @@
 from flask import Blueprint, request, render_template, jsonify, g, Response
 
-from app.utils.auth import generate_token, requires_auth
+from app.services.auth_service import generate_token, requires_auth
 from app.models.models import User, Task
 from app import db
 

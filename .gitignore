@@ -1,21 +1,70 @@
-# Frontend (remove completely)
-static/
-
-# Node
-node_modules/
-
+# -----------------------------
 # Python
-venv/
+# -----------------------------
 __pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.egg-info/
+.eggs/
 
-# DB
+# Virtual Environment
+venv/
+.env/
+.env
+
+# -----------------------------
+# Flask / App
+# -----------------------------
 instance/
+*.db
 *.sqlite3
 
-# Terraform
-terraform/
-.terraform/
+# -----------------------------
+# Environment Variables (Secrets)
+# -----------------------------
+.env.*
+*.env
 
+# -----------------------------
 # Logs
+# -----------------------------
 *.log
-.env
+
+# -----------------------------
+# Docker
+# -----------------------------
+docker-compose.override.yml
+
+# -----------------------------
+# Kubernetes / Helm (optional temp files)
+# -----------------------------
+*.tgz
+
+# -----------------------------
+# IDE / Editor
+# -----------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# -----------------------------
+# OS Files
+# -----------------------------
+.DS_Store
+Thumbs.db
+
+# -----------------------------
+# Testing / Coverage
+# -----------------------------
+.coverage
+htmlcov/
+.pytest_cache/
+
+# -----------------------------
+# Misc
+# -----------------------------
+*.bak
+*.tmp

@@ -1,0 +1,16 @@
+replicaCount: 1
+
+image:
+  repository: nirmalyavishal97/devsecops-flask-app
+  tag: "44"
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 5000
+
+env:
+  database_url: postgresql://postgres:postgres@postgres-db:5432/devsecops_db
+  secret_key: mysecretkey
+
+resources: {}

@@ -3,12 +3,12 @@ kind: Service
 metadata:
   name: flask-service
   labels:
-    app: flask-app
+    app.kubernetes.io/name: flask-app
 spec:
-  type: NodePort
+  type: {{ .Values.service.type }}
   selector:
     app: flask-app
   ports:
-    - port: 5000
+    - port: {{ .Values.service.port }}
       targetPort: 5000
       name: http

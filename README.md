@@ -1,4 +1,4 @@
-# 🚀 DevSecOps 3-Tier Application on Kubernetes
+#  DevSecOps 3-Tier Application (Flask + Kubernetes + GitOps)
 
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-Deployment-blue)
 ![Jenkins](https://img.shields.io/badge/Jenkins-CI%2FCD-red)
@@ -9,220 +9,253 @@
 
 ---
 
+
 ## 📌 Project Overview
 
-This project demonstrates a **complete DevSecOps pipeline** by deploying a **3-tier application** on Kubernetes using industry-standard tools.
+This project demonstrates a **complete DevSecOps pipeline** for deploying a **3-tier application** using modern tools and best practices.
+
+It includes:
+
+* Backend: Flask API (authentication + task management)
+* Database: PostgreSQL
+* Containerization: Docker
+* Orchestration: Kubernetes (Minikube)
+* Packaging: Helm
+* GitOps: ArgoCD
+* Monitoring: Prometheus + Grafana
+* Alerting: Alertmanager (Email notifications)
+* CI/CD: Jenkins
 
 ---
 
 ## 🏗️ Architecture
 
 ```
-Frontend (Nginx)
-        ↓
-Backend (Flask API)
-        ↓
-Database (PostgreSQL)
+User
+  ↓
+Nginx (Reverse Proxy)
+  ↓
+Flask Application (API + Metrics)
+  ↓
+PostgreSQL Database
+
+Monitoring Stack:
+Flask → Prometheus → Alertmanager → Email
+                   ↓
+                Grafana
 ```
 
 ---
 
 ## ⚙️ Tech Stack
 
-| Category         | Tools                 |
-| ---------------- | --------------------- |
-| Frontend         | Nginx                 |
-| Backend          | Flask                 |
-| Database         | PostgreSQL            |
-| Containerization | Docker                |
-| Orchestration    | Kubernetes (Minikube) |
-| CI/CD            | Jenkins               |
-| GitOps           | ArgoCD                |
-| Monitoring       | Prometheus            |
-| Visualization    | Grafana               |
-| Security         | Trivy                 |
-| Alerting         | Alertmanager          |
+| Category         | Tools Used                |
+| ---------------- | ------------------------- |
+| Backend          | Flask (Python)            |
+| Database         | PostgreSQL                |
+| Containerization | Docker, Docker Compose    |
+| Orchestration    | Kubernetes (Minikube)     |
+| Package Manager  | Helm                      |
+| GitOps           | ArgoCD                    |
+| Monitoring       | Prometheus                |
+| Visualization    | Grafana                   |
+| Alerting         | Alertmanager (Gmail SMTP) |
+| CI/CD            | Jenkins                   |
+| Security Scanning| Trivy                     |
 
 ---
 
-## 🚀 Features
+## 🔐 Security (DevSecOps)
 
-* CI/CD pipeline using Jenkins
-* GitOps deployment using ArgoCD
-* Container scanning using Trivy
-* Monitoring with Prometheus & Grafana
-* Alerting via Alertmanager
-* Reverse proxy using Nginx
+### 🔍 Trivy Image Scanning
+
+Integrated **Trivy** in the CI/CD pipeline to scan Docker images for vulnerabilities.
+
+* Scans for:
+
+  * OS package vulnerabilities
+  * Application dependencies
+  * Misconfigurations
+
+* Ensures only secure images are deployed to Kubernetes
+---
+### 🔁 Security Workflow
+
+1. Jenkins builds Docker image
+2. Trivy scans the image
+3. If vulnerabilities found → build can be failed (configurable)
+4. Secure image pushed to DockerHub
+5. ArgoCD deploys only validated images
+
+### 📌 Example Command
+
+```bash
+trivy image nirmalyavishal97/devsecops-flask-app:latest
+```
+---
+
+## 🔁 DevOps Workflow
+
+1. Developer pushes code to GitHub
+2. Jenkins builds Docker image & pushes to DockerHub
+3. Helm chart updated with new image tag
+4. ArgoCD syncs Kubernetes cluster automatically
+5. Application deployed to Kubernetes
+6. Prometheus scrapes metrics
+7. Alerts triggered via Alertmanager
+8. Notifications sent via Email
 
 ---
 
-## 🛠️ Setup Instructions
 
-### Start Minikube
+## 🔄 GitOps (ArgoCD)
 
-```
-minikube start
-```
+* Continuous deployment using ArgoCD
+* Auto-sync enabled from GitHub repo
+* Declarative Kubernetes deployments using Helm
 
-### Deploy PostgreSQL
+---
 
-```
-kubectl apply -f k8s/postgres-deployment.yaml
-kubectl apply -f k8s/postgres-service.yaml
-```
+## 📊 Monitoring & Alerting
 
-### Deploy Backend
+### 🔹 Prometheus
 
-```
-kubectl apply -f k8s/deployment.yaml
-kubectl apply -f k8s/service.yaml
-```
+* Scrapes custom metrics from Flask (`/metrics`)
+* Tracks request count & CPU usage
 
-### Deploy Frontend
+### 🔹 Grafana
 
-```
-kubectl apply -f k8s/frontend-deployment.yaml
-kubectl apply -f k8s/frontend-service.yaml
-```
+* Visual dashboards for:
+
+  * CPU usage
+  * Request metrics
+  * Application health
+
+### 🔹 Alertmanager
+
+* Email alerts configured via Gmail SMTP
+* Example alert:
+
+  * **HighCPUUsage (>70%)**
 
 ---
 
 ## 📸 Screenshots
 
-* Jenkins Pipeline
-* ArgoCD Sync
-* Grafana Dashboard
-* Prometheus Targets
-* Alert Email
-* Application UI
+### 🖥️ Application UI
+
+![App UI](screenshots/Application-UI.png)
+
+### 🔄 ArgoCD Sync
+
+![ArgoCD](screenshots/ArgoCD-sync.png)
+
+### 📊 Grafana Dashboard
+
+![Grafana](screenshots/Grafana-Dashboard.png)
+
+### 🚨 Prometheus Alert Firing
+
+![Prometheus](screenshots/Prometheus-Target-Firing.png)
+
+### 📧 Email Alert
+
+![Email](screenshots/Email-alert.png)
+
+### ⚙️ Jenkins Pipeline
+
+![Jenkins](screenshots/Jenkins-pipeline.png)
 
 ---
 
-# 🐞 Troubleshooting & Debugging Journey (REAL ISSUES)
+## 🛠️ Setup Instructions
 
-This project includes several real-world issues encountered and fixed:
+### 🔹 Clone Repo
 
----
-
-### ❌ 1. Git Stuck on `git add .`
-
-**Issue:** Git was hanging due to large/unnecessary files (node_modules, venv)
-**Fix:** Cleaned repo and used `.gitignore`
-
----
-
-### ❌ 2. CrashLoopBackOff in Kubernetes
-
-**Issue:** Container was crashing continuously
-**Root Cause:** Incorrect Docker CMD (`python app.py` missing)
-**Fix:** Switched to:
-
-```
-flask run --host=0.0.0.0
-```
-
----
-
-### ❌ 3. Flask Not Accessible from Kubernetes
-
-**Issue:** Service running but no response
-**Fix:** Bound Flask to:
-
-```
-0.0.0.0 instead of 127.0.0.1
+```bash
+git clone https://github.com/<your-username>/DevSecOps-3Tier-K8s-GitOps-Project.git
+cd DevSecOps-3Tier-K8s-GitOps-Project
 ```
 
 ---
 
-### ❌ 4. `/api/health` Returning 404
+### 🔹 Run Locally (Docker Compose)
 
-**Issue:** Endpoint not available
-**Fix:** Added health route explicitly in Flask app
-
----
-
-### ❌ 5. Minikube Browser Not Opening
-
-**Issue:** `xdg-open` permission error
-**Fix:** Used manual URL from:
-
-```
-minikube service <service> --url
+```bash
+docker-compose up --build
 ```
 
 ---
 
-### ❌ 6. Frontend Unable to Reach Backend
+### 🔹 Kubernetes Deployment
 
-**Issue:** Using `localhost` and `flask-service` incorrectly
-**Fix:** Implemented **Nginx reverse proxy**
+```bash
+# Apply Kubernetes manifests
+kubectl apply -f kubernetes/
 
----
-
-### ❌ 7. Nginx Proxy Path Issue (Critical Bug)
-
-**Issue:**
-
-```
-/api/health → /health (wrong routing)
-```
-
-**Fix:**
-
-```
-proxy_pass http://flask-service:5000/api/
+# OR using Helm
+helm install flask-app ./helm/flask-app
 ```
 
 ---
 
-### ❌ 8. Docker Image Not Updating
+### 🔹 Database Setup (Important)
 
-**Issue:** Kubernetes using cached image
-**Fix:**
+```bash
+export FLASK_APP=run.py
 
-```
-imagePullPolicy: Always
-```
-
----
-
-### ❌ 9. Wrong Docker Build Context
-
-**Issue:** Used `docker build ..`
-**Fix:** Built from correct folder:
-
-```
-docker build .
+flask db init
+flask db migrate -m "initial"
+flask db upgrade
 ```
 
 ---
 
-## 🔐 Security
+## 🔐 Security Considerations
 
-* Trivy used for vulnerability scanning
-* Secure CI pipeline implemented
+* Environment variables used for secrets
+* No hardcoded credentials in code
+* JWT-based authentication implemented
+* Ready for integration with:
 
----
-
-## 📊 Monitoring
-
-* Prometheus for metrics
-* Grafana dashboards
-* Alertmanager for email alerts
+  * Kubernetes Secrets
+  * Vault (future enhancement)
 
 ---
 
-## 🎯 Outcome
+## 🚀 Key Features
 
-This project demonstrates:
+* 🔐 JWT Authentication
+* 📋 Task Management API
+* 📊 Custom Metrics Export (/metrics)
+* 📦 Helm-based Deployment
+* 🔄 GitOps with ArgoCD
+* 📈 Monitoring & Alerting
+* ⚙️ CI/CD Pipeline with Jenkins
 
-* Real-world DevSecOps pipeline
-* Kubernetes production deployment
-* Debugging real production issues
-* Monitoring + security integration
+---
+
+## 🔮 Future Improvements
+
+* Add HPA (Horizontal Pod Autoscaling)
+* Integrate Kubernetes Secrets
+* Add Ingress Controller (NGINX)
+* Implement RBAC & Network Policies
+* Add Tracing (Jaeger)
+* Move to cloud (AWS / Azure)
 
 ---
 
 ## 👨‍💻 Author
 
 **Nirmalya Das**
+DevOps Engineer | Cloud | Kubernetes | CI/CD
+
+---
+
+## ⭐ If you like this project
+
+Give it a ⭐ on GitHub and connect with me on LinkedIn!
+
+---
+
